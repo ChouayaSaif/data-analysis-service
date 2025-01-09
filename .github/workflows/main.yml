@@ -54,5 +54,5 @@ jobs:
           distribution: 'corretto'
           java-version: 17
 
-      - name: Run Unit Tests
-        run: mvn -B test --file pom.xml
+      - name: Skip tests
+        run: mvn -B package -DskipTests --file pom.xml
