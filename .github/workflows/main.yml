@@ -51,4 +51,4 @@ jobs:
           context: .
           dockerfile: Dockerfile
           push: true
-          tags: ${{ DOCKER_HUB_USERNAME }}/spring-boot:latest
+          tags: ${{ USERNAME }}/spring-boot:latest
