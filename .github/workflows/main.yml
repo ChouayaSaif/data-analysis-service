@@ -40,7 +40,7 @@ jobs:
       mysql:
         image: mysql:latest
         ports:
-          - 3306:3306  # Ensure the MySQL container is available
+          - 3307:3306  # Ensure the MySQL container is available
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
         options: --health-cmd="mysqladmin ping --silent"  # Health check
