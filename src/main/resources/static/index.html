@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Health Data Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+        .chart-row {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+        .chart-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .chart-container.full-row {
+            width: calc(100% - 20px);
+        }
+        .chart-container.half-row {
+            width: calc(50% - 20px); /* Two charts per row */
+        }
+        .chart-container.third-row {
+            width: calc(33.33% - 20px); /* Three charts per row */
+        }
+        canvas {
+            width: 100% !important;
+            height: 400px !important; /* Fixed height for consistency */
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                width: calc(100% - 20px);
+            }
+            .chart-container.half-row, .chart-container.third-row {
+                width: calc(100% - 20px); /* Full width on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+<h1>Health Data Visualization</h1>
+
+<!-- Full Row Chart -->
+<div class="chart-row">
+    <div class="chart-container full-row">
+        <canvas id="dwellingChart"></canvas>
+    </div>
+</div>
+
+<!-- Half Row Charts -->
+<div class="chart-row">
+    <div class="chart-container half-row">
+        <canvas id="lengthOfStayChart"></canvas>
+    </div>
+    <div class="chart-container half-row">
+        <canvas id="grossRentChart"></canvas>
+    </div>
+</div>
+
+<!-- Full Row Chart -->
+<div class="chart-row">
+    <div class="chart-container full-row">
+        <canvas id="encountersByDayChart"></canvas>
+    </div>
+</div>
+
+<!-- Third Row Charts -->
+<div class="chart-row">
+    <div class="chart-container third-row">
+        <canvas id="encountersByMonthChart"></canvas>
+    </div>
+    <div class="chart-container third-row">
+        <canvas id="averageLengthOfStayByDepartmentChart"></canvas>
+    </div>
+    <div class="chart-container third-row">
+        <canvas id="totalGrossRentByInstitutionChart"></canvas>
+    </div>
+</div>
+
+<!-- Half Row Charts -->
+<div class="chart-row">
+    <div class="chart-container half-row">
+        <canvas id="encountersByDiagnosisChart"></canvas>
+    </div>
+    <div class="chart-container half-row">
+        <canvas id="averageGrossRentByAreaChart"></canvas>
+    </div>
+</div>
+
+<!-- Full Row Chart -->
+<div class="chart-row">
+    <div class="chart-container full-row">
+        <canvas id="encountersByHolidayChart"></canvas>
+    </div>
+</div>
+
+<!-- Two Charts per Row -->
+<div class="chart-row">
+    <div class="chart-container half-row">
+        <canvas id="totalPreOperativeDaysByPhysicianChart"></canvas>
+    </div>
+    <div class="chart-container half-row">
+        <canvas id="encountersByServiceChart"></canvas>
+    </div>
+</div>
+
+<div class="chart-row">
+    <div class="chart-container half-row">
+        <canvas id="averageDwellingValueByFSAChart"></canvas>
+    </div>
+    <div class="chart-container half-row">
+        <canvas id="encountersByWorkdayHolidayChart"></canvas>
+    </div>
+</div>
+
+<script>
+    // Function to create a chart
+    function createChart(canvasId, endpoint, label, backgroundColor, borderColor, chartType = 'bar', title) {
+        fetch(endpoint)
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                const labels = Object.keys(data);
+                const values = Object.values(data);
+
+                // Ensure backgroundColor and borderColor are arrays
+                if (!Array.isArray(backgroundColor)) {
+                    backgroundColor = Array(labels.length).fill(backgroundColor);
+                }
+                if (!Array.isArray(borderColor)) {
+                    borderColor = Array(labels.length).fill(borderColor);
+                }
+
+                new Chart(ctx, {
+                    type: chartType,
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: label,
+                            data: values,
+                            backgroundColor: backgroundColor,
+                            borderColor: borderColor,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: title, // Use the provided title
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Create charts with diverse types, sizes, and titles
+    createChart(
+        'dwellingChart',
+        '/api/visualization-data/dwelling-values',
+        'Total Dwelling Value',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(75, 192, 192, 1)',
+        'bar',
+        'Total Dwelling Value by Area'
+    );
+
+    createChart(
+        'lengthOfStayChart',
+        '/api/visualization-data/length-of-stay',
+        'Total Length of Stay',
+        [
+            'rgba(255, 99, 132, 0.2)', // Red
+            'rgba(54, 162, 235, 0.2)', // Blue
+            'rgba(255, 206, 86, 0.2)', // Yellow
+            'rgba(75, 192, 192, 0.2)', // Teal
+            'rgba(153, 102, 255, 0.2)' // Purple
+        ],
+        [
+            'rgba(255, 99, 132, 1)', // Red
+            'rgba(54, 162, 235, 1)', // Blue
+            'rgba(255, 206, 86, 1)', // Yellow
+            'rgba(75, 192, 192, 1)', // Teal
+            'rgba(153, 102, 255, 1)' // Purple
+        ],
+        'pie',
+        'Length of Stay Distribution'
+    );
+
+    createChart(
+        'grossRentChart',
+        '/api/visualization-data/gross-rent',
+        'Total Gross Rent',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(54, 162, 235, 1)',
+        'line',
+        'Gross Rent Over Time'
+    );
+
+    createChart(
+        'encountersByDayChart',
+        '/api/visualization-data/encounters-by-day',
+        'Encounters by Day of Week',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(153, 102, 255, 1)',
+        'bar',
+        'Encounters by Day of Week'
+    );
+
+    createChart(
+        'encountersByMonthChart',
+        '/api/visualization-data/encounters-by-month',
+        'Encounters by Month',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 159, 64, 1)',
+        'line',
+        'Encounters by Month'
+    );
+
+    createChart(
+        'averageLengthOfStayByDepartmentChart',
+        '/api/visualization-data/average-length-of-stay-by-department',
+        'Average Length of Stay by Department',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(255, 206, 86, 1)',
+        'bar',
+        'Average Length of Stay by Department'
+    );
+
+    createChart(
+        'totalGrossRentByInstitutionChart',
+        '/api/visualization-data/total-gross-rent-by-institution',
+        'Total Gross Rent by Institution',
+        [
+            'rgba(255, 99, 132, 0.2)', // Red
+            'rgba(54, 162, 235, 0.2)', // Blue
+            'rgba(255, 206, 86, 0.2)', // Yellow
+            'rgba(75, 192, 192, 0.2)', // Teal
+            'rgba(153, 102, 255, 0.2)', // Purple
+            'rgba(255, 159, 64, 0.2)', // Orange
+            'rgba(50, 205, 50, 0.2)', // Green
+            'rgba(255, 182, 193, 0.2)' // Pink
+        ],
+        [
+            'rgba(255, 99, 132, 1)', // Red
+            'rgba(54, 162, 235, 1)', // Blue
+            'rgba(255, 206, 86, 1)', // Yellow
+            'rgba(75, 192, 192, 1)', // Teal
+            'rgba(153, 102, 255, 1)', // Purple
+            'rgba(255, 159, 64, 1)', // Orange
+            'rgba(50, 205, 50, 1)', // Green
+            'rgba(255, 182, 193, 1)' // Pink
+        ],
+        'bar',
+        'Total Gross Rent by Institution'
+    );
+
+    createChart(
+        'encountersByDiagnosisChart',
+        '/api/visualization-data/encounters-by-diagnosis',
+        'Encounters by Principal Diagnosis',
+        [
+            'rgba(255, 99, 132, 0.2)', // Red
+            'rgba(54, 162, 235, 0.2)', // Blue
+            'rgba(255, 206, 86, 0.2)' // Yellow
+        ],
+        [
+            'rgba(255, 99, 132, 1)', // Red
+            'rgba(54, 162, 235, 1)', // Blue
+            'rgba(255, 206, 86, 1)' // Yellow
+        ],
+        'pie',
+        'Encounters by Principal Diagnosis'
+    );
+
+    createChart(
+        'averageGrossRentByAreaChart',
+        '/api/visualization-data/average-gross-rent-by-area',
+        'Average Gross Rent by Area',
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 99, 132, 1)',
+        'line',
+        'Average Gross Rent by Area'
+    );
+
+    createChart(
+        'encountersByHolidayChart',
+        '/api/visualization-data/encounters-by-holiday',
+        'Encounters by Holiday',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(54, 162, 235, 1)',
+        'bar',
+        'Encounters by Holiday'
+    );
+
+    createChart(
+        'totalPreOperativeDaysByPhysicianChart',
+        '/api/visualization-data/total-pre-operative-days-by-physician',
+        'Total Pre-Operative Days by Physician',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 159, 64, 1)',
+        'bar',
+        'Total Pre-Operative Days by Physician'
+    );
+
+    createChart(
+        'encountersByServiceChart',
+        '/api/visualization-data/encounters-by-service',
+        'Encounters by Service Description',
+        [
+            'rgba(75, 192, 192, 0.2)', // Teal
+            'rgba(255, 99, 132, 0.2)'  // Red
+        ],
+        [
+            'rgba(75, 192, 192, 1)', // Teal
+            'rgba(255, 99, 132, 1)'  // Red
+        ],
+        'pie',
+        'Encounters by Service Description'
+    );
+
+    createChart(
+        'averageDwellingValueByFSAChart',
+        '/api/visualization-data/average-dwelling-value-by-fsa',
+        'Average Dwelling Value by FSA',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(153, 102, 255, 1)',
+        'line',
+        'Average Dwelling Value by FSA'
+    );
+
+    createChart(
+        'encountersByWorkdayHolidayChart',
+        '/api/visualization-data/encounters-by-workday-holiday',
+        'Encounters by Workday vs. Holiday',
+        [
+            'rgba(255, 99, 132, 0.2)', // Red
+            'rgba(54, 162, 235, 0.2)', // Blue
+            'rgba(255, 206, 86, 0.2)'  // Yellow
+        ],
+        [
+            'rgba(255, 99, 132, 1)', // Red
+            'rgba(54, 162, 235, 1)', // Blue
+            'rgba(255, 206, 86, 1)'  // Yellow
+        ],
+        'bar',
+        'Encounters by Workday vs. Holiday'
+    );
+</script>
+</body>
+</html>
