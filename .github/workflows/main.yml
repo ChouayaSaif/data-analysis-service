@@ -12,15 +12,12 @@ jobs:
     services:
       mysql:
         image: mysql:latest
-        container_name: mysql-container-2
-        environment:
-          MYSQL_ROOT_PASSWORD: rootpassword
         ports:
-          - "3307:3306"
-        volumes:
-          - mysql_data:/var/lib/mysql
-        networks:
-          - my_network
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+        # Optionally, you can use a volume, but it's not required in a CI/CD pipeline.
+        options: --health-cmd="mysqladmin ping --silent"  # Ensure MySQL is ready
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -50,11 +47,5 @@ jobs:
           distribution: 'corretto'
           java-version: 17
 
-      - name: Unit Tests
+      - name: Run Unit Tests
         run: mvn -B test --file pom.xml
-
-volumes:
-  mysql_data:
-
-networks:
-  my_network:
