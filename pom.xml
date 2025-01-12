@@ -123,6 +123,12 @@
 			<artifactId>jvppeteer</artifactId>
 			<version>1.1.5</version>
 		</dependency>
+		<!-- Check for API Documentation with swagger UI -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.7.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
