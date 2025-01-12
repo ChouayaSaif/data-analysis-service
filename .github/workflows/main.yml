@@ -13,10 +13,11 @@ jobs:
       mysql:
         image: mysql:latest
         ports:
-          - 3307:3306
+          - 3306:3306  # Expose MySQL on the default port 3306
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
-        options: --health-cmd="mysqladmin ping --silent"
+          MYSQL_DATABASE: addresses  # Add this to create the database
+        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
