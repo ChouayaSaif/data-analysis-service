@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  my-db:
+    image: mysql:5.7
+    container_name: my-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: addresses
+      MYSQL_USER: your_database_user
+      MYSQL_PASSWORD: your_database_password
+    ports:
+      - "3307:3306"
+    networks:
+      - my-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  spring-app:
+    image: your-spring-app-image:latest
+    container_name: spring-app
+    depends_on:
+      my-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://my-db:3306/addresses
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpassword
+    ports:
+      - "8081:8080"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
