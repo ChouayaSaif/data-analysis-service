@@ -75,7 +75,7 @@ public class MachineLearningService {
             dayInWeekValues.add(address.getDay_in_week());
             institutionValues.add(address.getInstitution());
             departmentValues.add(address.getDepartment());
-            encounterNumberValues.add(address.getEncounter_number());
+            encounterNumberValues.add(address.getEncounter_number().toString()); // Convert Integer to String
             isWorkdayValues.add(address.getIsworkday());
             periodValues.add(address.getPeriod());
             serviceDescriptionValues.add(address.getService_description());
@@ -143,12 +143,12 @@ public class MachineLearningService {
             Instance instance = new DenseInstance(dataset.numAttributes());
 
             // Set numeric attributes
-            instance.setValue(dataset.attribute("latitude"), Double.parseDouble(address.getLatitude()));
-            instance.setValue(dataset.attribute("longitude"), Double.parseDouble(address.getLongitude()));
-            instance.setValue(dataset.attribute("average_dwelling_value"), Double.parseDouble(address.getAverage_dwelling_value()));
-            instance.setValue(dataset.attribute("average_gross_rent"), Double.parseDouble(address.getAverage_gross_rent()));
-            instance.setValue(dataset.attribute("pre_operative_days"), Double.parseDouble(address.getPre_operative_days()));
-            instance.setValue(dataset.attribute("length_of_stay"), Double.parseDouble(address.getLength_of_stay()));
+            instance.setValue(dataset.attribute("latitude"), address.getLatitude());
+            instance.setValue(dataset.attribute("longitude"), address.getLongitude());
+            instance.setValue(dataset.attribute("average_dwelling_value"), address.getAverage_dwelling_value());
+            instance.setValue(dataset.attribute("average_gross_rent"), address.getAverage_gross_rent());
+            instance.setValue(dataset.attribute("pre_operative_days"), address.getPre_operative_days().doubleValue());
+            instance.setValue(dataset.attribute("length_of_stay"), address.getLength_of_stay().doubleValue());
 
             // Set nominal attributes
             setNominalValue(instance, "principal_diagnosis", address.getPrincipal_diagnosis());
@@ -158,7 +158,7 @@ public class MachineLearningService {
             setNominalValue(instance, "day_in_week", address.getDay_in_week());
             setNominalValue(instance, "institution", address.getInstitution());
             setNominalValue(instance, "department", address.getDepartment());
-            setNominalValue(instance, "encounter_number", address.getEncounter_number());
+            setNominalValue(instance, "encounter_number", address.getEncounter_number().toString()); // Convert Integer to String
             setNominalValue(instance, "isworkday", address.getIsworkday());
             setNominalValue(instance, "period", address.getPeriod());
             setNominalValue(instance, "service_description", address.getService_description());
@@ -185,11 +185,11 @@ public class MachineLearningService {
         instance.setDataset(dataset);
 
         // Set numeric attributes
-        instance.setValue(dataset.attribute("latitude"), Double.parseDouble(address.getLatitude()));
-        instance.setValue(dataset.attribute("longitude"), Double.parseDouble(address.getLongitude()));
-        instance.setValue(dataset.attribute("average_dwelling_value"), Double.parseDouble(address.getAverage_dwelling_value()));
-        instance.setValue(dataset.attribute("average_gross_rent"), Double.parseDouble(address.getAverage_gross_rent()));
-        instance.setValue(dataset.attribute("pre_operative_days"), Double.parseDouble(address.getPre_operative_days()));
+        instance.setValue(dataset.attribute("latitude"), address.getLatitude());
+        instance.setValue(dataset.attribute("longitude"), address.getLongitude());
+        instance.setValue(dataset.attribute("average_dwelling_value"), address.getAverage_dwelling_value());
+        instance.setValue(dataset.attribute("average_gross_rent"), address.getAverage_gross_rent());
+        instance.setValue(dataset.attribute("pre_operative_days"), address.getPre_operative_days().doubleValue());
 
         // Set nominal attributes
         setNominalValue(instance, "principal_diagnosis", address.getPrincipal_diagnosis());
@@ -199,7 +199,7 @@ public class MachineLearningService {
         setNominalValue(instance, "day_in_week", address.getDay_in_week());
         setNominalValue(instance, "institution", address.getInstitution());
         setNominalValue(instance, "department", address.getDepartment());
-        setNominalValue(instance, "encounter_number", address.getEncounter_number());
+        setNominalValue(instance, "encounter_number", address.getEncounter_number().toString()); // Convert Integer to String
         setNominalValue(instance, "isworkday", address.getIsworkday());
         setNominalValue(instance, "period", address.getPeriod());
         setNominalValue(instance, "service_description", address.getService_description());

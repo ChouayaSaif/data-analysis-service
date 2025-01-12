@@ -1,31 +1,29 @@
 package com.saif.project.dataanalysis.service;
 
-
 import com.saif.project.storage.model.Address;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
-// Provides basic descriptive statistics like mean, median, and standard deviation.
-
 @Service
 public class DescriptiveStatisticsService {
 
+    // Calculate mean for the length_of_stay field
     public double calculateMeanLengthOfStay(List<Address> addresses) {
         DescriptiveStatistics stats = new DescriptiveStatistics();
         addresses.stream()
                 .filter(a -> a.getLength_of_stay() != null)
-                .forEach(a -> stats.addValue(Double.parseDouble(a.getLength_of_stay())));
+                .forEach(a -> stats.addValue(a.getLength_of_stay().doubleValue())); // Use doubleValue() for Integer
         return stats.getMean();
     }
 
+    // Calculate median for the length_of_stay field
     public double calculateMedianLengthOfStay(List<Address> addresses) {
         DescriptiveStatistics stats = new DescriptiveStatistics();
         addresses.stream()
                 .filter(a -> a.getLength_of_stay() != null)
-                .forEach(a -> stats.addValue(Double.parseDouble(a.getLength_of_stay())));
+                .forEach(a -> stats.addValue(a.getLength_of_stay().doubleValue())); // Use doubleValue() for Integer
         return stats.getPercentile(50);
     }
 
@@ -34,7 +32,7 @@ public class DescriptiveStatisticsService {
         DescriptiveStatistics stats = new DescriptiveStatistics();
         addresses.stream()
                 .filter(a -> a.getAverage_gross_rent() != null)
-                .forEach(a -> stats.addValue(Double.parseDouble(a.getAverage_gross_rent())));
+                .forEach(a -> stats.addValue(a.getAverage_gross_rent())); // Directly use Double value
         return stats.getMean();
     }
 
@@ -43,7 +41,7 @@ public class DescriptiveStatisticsService {
         DescriptiveStatistics stats = new DescriptiveStatistics();
         addresses.stream()
                 .filter(a -> a.getAverage_gross_rent() != null)
-                .forEach(a -> stats.addValue(Double.parseDouble(a.getAverage_gross_rent())));
+                .forEach(a -> stats.addValue(a.getAverage_gross_rent())); // Directly use Double value
         return stats.getPercentile(50);
     }
 
@@ -52,17 +50,16 @@ public class DescriptiveStatisticsService {
         DescriptiveStatistics stats = new DescriptiveStatistics();
         addresses.stream()
                 .filter(a -> a.getAverage_dwelling_value() != null)
-                .forEach(a -> stats.addValue(Double.parseDouble(a.getAverage_dwelling_value())));
+                .forEach(a -> stats.addValue(a.getAverage_dwelling_value())); // Directly use Double value
         return stats.getStandardDeviation();
     }
 
     // Calculate range for the average_dwelling_value field
-    //The range is calculated as the difference between the maximum value (stats.getMax()) and the minimum value (stats.getMin())
     public double calculateRangeDwellingValue(List<Address> addresses) {
         DescriptiveStatistics stats = new DescriptiveStatistics();
         addresses.stream()
                 .filter(a -> a.getAverage_dwelling_value() != null)
-                .forEach(a -> stats.addValue(Double.parseDouble(a.getAverage_dwelling_value())));
+                .forEach(a -> stats.addValue(a.getAverage_dwelling_value())); // Directly use Double value
         return stats.getMax() - stats.getMin();
     }
 
@@ -71,7 +68,7 @@ public class DescriptiveStatisticsService {
         DescriptiveStatistics stats = new DescriptiveStatistics();
         addresses.stream()
                 .filter(a -> a.getPre_operative_days() != null)
-                .forEach(a -> stats.addValue(Double.parseDouble(a.getPre_operative_days())));
+                .forEach(a -> stats.addValue(a.getPre_operative_days().doubleValue())); // Use doubleValue() for Integer
 
         return String.format(
                 "Min: %.2f, Max: %.2f, Mean: %.2f, Median: %.2f, Std Dev: %.2f",
@@ -82,5 +79,4 @@ public class DescriptiveStatisticsService {
                 stats.getStandardDeviation()
         );
     }
-
 }

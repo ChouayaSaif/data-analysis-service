@@ -1,15 +1,25 @@
+version: '3.8'
+
 services:
   mysql:
     image: mysql:latest
     container_name: mysql-container-2
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword  # Root password for MySQL
+      MYSQL_DATABASE: mydb  # Create a custom database
+      MYSQL_USER: appuser  # Non-root user for the application
+      MYSQL_PASSWORD: apppassword  # Password for the non-root user
     ports:
       - "3307:3306"  # Map host port 3307 to container port 3306
     volumes:
       - mysql_data:/var/lib/mysql  # Persistent data storage
     networks:
       - my_network  # Custom network for communication with other services
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   app:
     build:
@@ -19,15 +29,14 @@ services:
     ports:
       - "8300:8080"  # Map the application port
     depends_on:
-      - mysql  # Ensure MySQL starts before the application
+      mysql:
+        condition: service_healthy  # Wait for MySQL to be healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container-2:3306/sys
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: rootpassword
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container-2:3306/mydb
+      SPRING_DATASOURCE_USERNAME: appuser  # Use the non-root user
+      SPRING_DATASOURCE_PASSWORD: apppassword  # Use the non-root user's password
     networks:
       - my_network
-    command: [ "./wait-for-it.sh", "mysql-container-2:3306", "--", "java", "-jar", "app.jar" ]  # Wait for MySQL
-
 
 volumes:
   mysql_data:  # Define a volume for MySQL data persistence

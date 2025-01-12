@@ -13,16 +13,16 @@ public class Address {
     private String principal_diagnosis;
     private String discharge_date;
     private String physician_name;
-    private String latitude;
+    private Double latitude; // Changed to Double
     private String main_service;
     private String day_in_week;
     private String institution;
-    private String pre_operative_days;
-    private String average_dwelling_value;
-    private String encounter_counter;
+    private Integer pre_operative_days; // Changed to Integer
+    private Double average_dwelling_value; // Changed to Double
+    private Integer encounter_counter; // Changed to Integer
     private String department;
-    private String longitude;
-    private String encounter_number;
+    private Double longitude; // Changed to Double
+    private Integer encounter_number; // Changed to Integer
     private String isworkday;
     private String period;
     private String service_description;
@@ -35,13 +35,17 @@ public class Address {
     private String principle_procedure;
     private String procedure_description;
     private String fsa;
-    private String length_of_stay;
-    private String average_gross_rent;
+    private Integer length_of_stay; // Changed to Integer
+    private Double average_gross_rent; // Changed to Double
 
+    // Default constructor
     public Address() {
     }
 
-
+    // Getters
+    public Integer getId() {
+        return Id;
+    }
 
     public String getPrincipal_diagnosis() {
         return principal_diagnosis;
@@ -55,7 +59,7 @@ public class Address {
         return physician_name;
     }
 
-    public String getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
@@ -71,15 +75,15 @@ public class Address {
         return institution;
     }
 
-    public String getPre_operative_days() {
+    public Integer getPre_operative_days() {
         return pre_operative_days;
     }
 
-    public String getAverage_dwelling_value() {
+    public Double getAverage_dwelling_value() {
         return average_dwelling_value;
     }
 
-    public String getEncounter_counter() {
+    public Integer getEncounter_counter() {
         return encounter_counter;
     }
 
@@ -87,11 +91,11 @@ public class Address {
         return department;
     }
 
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public String getEncounter_number() {
+    public Integer getEncounter_number() {
         return encounter_number;
     }
 
@@ -143,15 +147,18 @@ public class Address {
         return fsa;
     }
 
-    public String getLength_of_stay() {
+    public Integer getLength_of_stay() {
         return length_of_stay;
     }
 
-    public String getAverage_gross_rent() {
+    public Double getAverage_gross_rent() {
         return average_gross_rent;
     }
-    // Setters
 
+    // Setters
+    public void setId(Integer id) {
+        this.Id = id;
+    }
 
     public void setPrincipal_diagnosis(String principal_diagnosis) {
         this.principal_diagnosis = principal_diagnosis;
@@ -165,7 +172,7 @@ public class Address {
         this.physician_name = physician_name;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
@@ -181,15 +188,15 @@ public class Address {
         this.institution = institution;
     }
 
-    public void setPre_operative_days(String pre_operative_days) {
+    public void setPre_operative_days(Integer pre_operative_days) {
         this.pre_operative_days = pre_operative_days;
     }
 
-    public void setAverage_dwelling_value(String average_dwelling_value) {
+    public void setAverage_dwelling_value(Double average_dwelling_value) {
         this.average_dwelling_value = average_dwelling_value;
     }
 
-    public void setEncounter_counter(String encounter_counter) {
+    public void setEncounter_counter(Integer encounter_counter) {
         this.encounter_counter = encounter_counter;
     }
 
@@ -197,11 +204,11 @@ public class Address {
         this.department = department;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    public void setEncounter_number(String encounter_number) {
+    public void setEncounter_number(Integer encounter_number) {
         this.encounter_number = encounter_number;
     }
 
@@ -253,11 +260,11 @@ public class Address {
         this.fsa = fsa;
     }
 
-    public void setLength_of_stay(String length_of_stay) {
+    public void setLength_of_stay(Integer length_of_stay) {
         this.length_of_stay = length_of_stay;
     }
 
-    public void setAverage_gross_rent(String average_gross_rent) {
+    public void setAverage_gross_rent(Double average_gross_rent) {
         this.average_gross_rent = average_gross_rent;
     }
 
@@ -268,16 +275,16 @@ public class Address {
                 ", principal_diagnosis='" + principal_diagnosis + '\'' +
                 ", discharge_date='" + discharge_date + '\'' +
                 ", physician_name='" + physician_name + '\'' +
-                ", latitude='" + latitude + '\'' +
+                ", latitude=" + latitude +
                 ", main_service='" + main_service + '\'' +
                 ", day_in_week='" + day_in_week + '\'' +
                 ", institution='" + institution + '\'' +
-                ", pre_operative_days='" + pre_operative_days + '\'' +
-                ", average_dwelling_value='" + average_dwelling_value + '\'' +
-                ", encounter_counter='" + encounter_counter + '\'' +
+                ", pre_operative_days=" + pre_operative_days +
+                ", average_dwelling_value=" + average_dwelling_value +
+                ", encounter_counter=" + encounter_counter +
                 ", department='" + department + '\'' +
-                ", longitude='" + longitude + '\'' +
-                ", encounter_number='" + encounter_number + '\'' +
+                ", longitude=" + longitude +
+                ", encounter_number=" + encounter_number +
                 ", isworkday='" + isworkday + '\'' +
                 ", period='" + period + '\'' +
                 ", service_description='" + service_description + '\'' +
@@ -290,8 +297,43 @@ public class Address {
                 ", principle_procedure='" + principle_procedure + '\'' +
                 ", procedure_description='" + procedure_description + '\'' +
                 ", fsa='" + fsa + '\'' +
-                ", length_of_stay='" + length_of_stay + '\'' +
-                ", average_gross_rent='" + average_gross_rent + '\'' +
+                ", length_of_stay=" + length_of_stay +
+                ", average_gross_rent=" + average_gross_rent +
                 '}';
     }
 }
+
+/*public class Address {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer Id;
+
+    private String principal_diagnosis;
+    private String discharge_date;
+    private String physician_name;
+    private String latitude;
+    private String main_service;
+    private String day_in_week;
+    private String institution;
+    private String pre_operative_days;
+    private String average_dwelling_value;
+    private String encounter_counter;
+    private String department;
+    private String longitude;
+    private String encounter_number;
+    private String isworkday;
+    private String period;
+    private String service_description;
+    private String principal_physician;
+    private String isholiday;
+    private String areaname;
+    private String encounter_month;
+    private String diagnosis_short_description;
+    private String holidayname;
+    private String principle_procedure;
+    private String procedure_description;
+    private String fsa;
+    private String length_of_stay;
+    private String average_gross_rent;
+*/
