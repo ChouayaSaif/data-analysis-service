@@ -2,9 +2,7 @@ package com.saif.project.DataIngestion.controller;
 
 import com.saif.project.DataIngestion.service.DataIngestionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,11 +17,12 @@ public class DataIngestionController {
         this.dataIngestionService = dataIngestionService;
     }
 
-    @GetMapping("/ingest")
-    public Map<String, Object> importData(@RequestParam String filePath) {
+    // POST endpoint to ingest CSV data from the request body
+    @PostMapping("/ingest")
+    public Map<String, Object> importData(@RequestBody String csvData) {
         Map<String, Object> result = new HashMap<>();
         try {
-            Object data = dataIngestionService.importData(filePath);
+            Object data = dataIngestionService.importData(csvData); // Pass CSV data to the service
             result.put("data", data);
         } catch (IOException e) {
             e.printStackTrace();
