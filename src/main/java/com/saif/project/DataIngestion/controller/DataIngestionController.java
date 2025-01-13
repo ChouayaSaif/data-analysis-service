@@ -17,7 +17,7 @@ public class DataIngestionController {
         this.dataIngestionService = dataIngestionService;
     }
 
-    // POST endpoint to ingest CSV data from the request body
+    // POST endpoint to ingest CSV data from the request body.
     @PostMapping("/ingest")
     public Map<String, Object> importData(@RequestBody String csvData) {
         Map<String, Object> result = new HashMap<>();
