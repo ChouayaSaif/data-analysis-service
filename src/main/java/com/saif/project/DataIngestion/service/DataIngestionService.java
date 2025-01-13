@@ -1,7 +1,7 @@
 package com.saif.project.DataIngestion.service;
 
-import com.saif.project.DataIngestion.ingestionType.CSVDataIngestion;
 import com.saif.project.DataIngestion.DataIngestionInterface;
+import com.saif.project.DataIngestion.ingestionType.CSVDataIngestion;
 import com.saif.project.DataIngestion.ingestionType.ExcelDataIngestion;
 import com.saif.project.DataIngestion.ingestionType.JSONDataIngestion;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import java.util.*;
 public class DataIngestionService {
 
     private final Map<String, DataIngestionInterface> ingestionStrategies;
-    private final Map<String, Object> ingestedDataMap;  // Variable to store ingested data
+    private final Map<String, Object> ingestedDataMap;
 
     @Autowired
     public DataIngestionService(CSVDataIngestion csvIngestion,
@@ -26,9 +26,12 @@ public class DataIngestionService {
         ingestionStrategies.put("xls", excelIngestion);
         ingestionStrategies.put("xlsx", excelIngestion);
 
-        ingestedDataMap = new HashMap<>(); // Initialize the map to store ingested data
+        ingestedDataMap = new HashMap<>();
     }
 
+    /**
+     * Imports data from a file using the appropriate ingestion strategy.
+     */
     public Object importData(String filePath) throws IOException {
         String fileExtension = getFileExtension(filePath);
         DataIngestionInterface ingestionStrategy = ingestionStrategies.get(fileExtension);
@@ -38,23 +41,44 @@ public class DataIngestionService {
         }
 
         Object ingestedData = ingestionStrategy.importData(filePath);
-
-        // Store the ingested data in the map with the file path as the key
-        ingestedDataMap.put(filePath, ingestedData);
-
+        storeIngestedData(filePath, ingestedData);
         return ingestedData;
     }
 
-    public Object getIngestedData(String filePath) {
-        return ingestedDataMap.get(filePath);  // Get the ingested data by file path
+    /**
+     * Imports data from predefined paths for all available ingestion types.
+     */
+    public void importAllAvailableData() throws IOException {
+        // Predefined file paths for demonstration purposes
+        List<String> predefinedPaths = List.of(
+                "data.csv",  // CSV file
+                "data.json", // JSON file
+                "data.xlsx"  // Excel file (modern format)
+        );
+
+        for (String path : predefinedPaths) {
+            try {
+                importData(path);
+            } catch (IOException | UnsupportedOperationException e) {
+                // Log or handle errors for specific files without stopping the process
+                System.err.println("Failed to ingest file: " + path + " Error: " + e.getMessage());
+            }
+        }
     }
 
-    // New method to get all ingested data
+    public void storeIngestedData(String filePath, Object data) {
+        ingestedDataMap.put(filePath, data);
+    }
+
     public Map<String, Object> getAllIngestedData() {
-        return ingestedDataMap;  // Return the entire map of ingested data
+        return new HashMap<>(ingestedDataMap);
     }
 
     private String getFileExtension(String filePath) {
-        return filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
+        int lastDotIndex = filePath.lastIndexOf('.');
+        if (lastDotIndex == -1) {
+            throw new IllegalArgumentException("File path does not contain an extension: " + filePath);
+        }
+        return filePath.substring(lastDotIndex + 1).toLowerCase();
     }
 }

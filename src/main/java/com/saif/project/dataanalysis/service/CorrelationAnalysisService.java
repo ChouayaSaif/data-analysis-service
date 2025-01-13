@@ -16,7 +16,6 @@ public class CorrelationAnalysisService {
      * @param fieldX    First field (e.g., "average_dwelling_value")
      * @param fieldY    Second field (e.g., "average_gross_rent")
      * @return Correlation coefficient between the two fields
-     * @throws IllegalArgumentException if no valid data pairs are found or fields are invalid
      */
     public double calculateCorrelation(List<Address> addresses, String fieldX, String fieldY) {
         // Filter and parse the data for the two fields
@@ -66,22 +65,30 @@ public class CorrelationAnalysisService {
     /**
      * Parse a numeric field from the Address object by name.
      *
-     * @param address   Address object
+     * @param address Address object
      * @param fieldName Field name as a string
-     * @return Double value or null if the field is invalid or not supported
+     * @return Parsed double value or null if not valid
      */
     private Double parseField(Address address, String fieldName) {
-        switch (fieldName) {
-            case "average_dwelling_value":
-                return address.getAverage_dwelling_value() != null ? address.getAverage_dwelling_value().doubleValue() : null;
-            case "average_gross_rent":
-                return address.getAverage_gross_rent() != null ? address.getAverage_gross_rent().doubleValue() : null;
-            case "pre_operative_days":
-                return address.getPre_operative_days() != null ? address.getPre_operative_days().doubleValue() : null;
-            case "length_of_stay":
-                return address.getLength_of_stay() != null ? address.getLength_of_stay().doubleValue() : null;
-            default:
-                throw new IllegalArgumentException("Field name not supported for correlation analysis: " + fieldName);
+        try {
+            switch (fieldName) {
+                case "average_dwelling_value":
+                    return address.getAverage_dwelling_value() != null ?
+                            Double.parseDouble(address.getAverage_dwelling_value()) : null;
+                case "average_gross_rent":
+                    return address.getAverage_gross_rent() != null ?
+                            Double.parseDouble(address.getAverage_gross_rent()) : null;
+                case "pre_operative_days":
+                    return address.getPre_operative_days() != null ?
+                            Double.parseDouble(address.getPre_operative_days()) : null;
+                case "length_of_stay":
+                    return address.getLength_of_stay() != null ?
+                            Double.parseDouble(address.getLength_of_stay()) : null;
+                default:
+                    throw new IllegalArgumentException("Field name not supported for correlation analysis.");
+            }
+        } catch (NumberFormatException e) {
+            return null;
         }
     }
 

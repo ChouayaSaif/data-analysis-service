@@ -2,13 +2,16 @@ package com.saif.project.DataPreprocessing.service;
 
 import com.saif.project.DataIngestion.service.DataIngestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.saif.project.storage.model.Address;
 import com.saif.project.storage.repository.MysqlRepository;
+import com.saif.project.DataIngestion.service.DataIngestionService;
 
 
 @Service
@@ -28,15 +31,32 @@ public class DataPreprocessingService {
 
     // Method to combine all ingested data into a single list (DataFrame-like structure)
     public List<Map<String, Object>> combineAllIngestedData() {
-        Map<String, Object> ingestedDataMap = dataIngestionService.getAllIngestedData();
         List<Map<String, Object>> combinedData = new ArrayList<>();
 
-        for (Object data : ingestedDataMap.values()) {
-            if (data instanceof List<?>) {
-                // Assuming each ingested data is a list of records (like rows in a DataFrame)
-                combinedData.addAll((List<Map<String, Object>>) data);
+        try {
+            // Retrieve all ingested data
+            Map<String, Object> allData = dataIngestionService.getAllIngestedData();
+
+            // Iterate through each data source (e.g., data.csv, data.xlsx)
+            for (Map.Entry<String, Object> entry : allData.entrySet()) {
+                String sourceName = entry.getKey(); // e.g., "data.csv", "data.xlsx"
+                Object sourceData = entry.getValue();
+
+                // Check if the source data is a map and contains a "data" key
+                if (sourceData instanceof Map) {
+                    Map<String, Object> sourceDataMap = (Map<String, Object>) sourceData;
+                    Object data = sourceDataMap.get("data");
+
+                    // Check if the "data" key contains a list of records
+                    if (data instanceof List) {
+                        List<Map<String, Object>> records = (List<Map<String, Object>>) data;
+                        combinedData.addAll(records); // Add all records to the combined list
+                    }
+                }
             }
-            // Add more conditions if the data is in other formats (e.g., a Map, custom object, etc.)
+        } catch (Exception e) {
+            // Log the error and return an empty list or handle it as per your requirement
+            System.err.println("Failed to combine ingested data: " + e.getMessage());
         }
 
         return combinedData;
@@ -74,16 +94,16 @@ public class DataPreprocessingService {
         address.setPrincipal_diagnosis((String) data.getOrDefault("principal_diagnosis", null));
         address.setDischarge_date((String) data.getOrDefault("discharge_date", null));
         address.setPhysician_name((String) data.getOrDefault("physician_name", null));
-        address.setLatitude(data.get("latitude") != null ? Double.parseDouble(data.get("latitude").toString()) : null);
+        address.setLatitude(data.get("latitude") != null ? data.get("latitude").toString() : null);
         address.setMain_service((String) data.getOrDefault("main_service", null));
         address.setDay_in_week((String) data.getOrDefault("day_in_week", null));
         address.setInstitution((String) data.getOrDefault("institution", null));
-        address.setPre_operative_days(data.get("pre_operative_days") != null ? Integer.parseInt(data.get("pre_operative_days").toString()) : null);
-        address.setAverage_dwelling_value(data.get("average_dwelling_value") != null ? Double.parseDouble(data.get("average_dwelling_value").toString()) : null);
-        address.setEncounter_counter(data.get("encounter_counter") != null ? Integer.parseInt(data.get("encounter_counter").toString()) : null);
+        address.setPre_operative_days((String) data.getOrDefault("pre_operative_days", null));
+        address.setAverage_dwelling_value((String) data.getOrDefault("average_dwelling_value", null));
+        address.setEncounter_counter((String) data.getOrDefault("encounter_counter", null));
         address.setDepartment((String) data.getOrDefault("department", null));
-        address.setLongitude(data.get("longitude") != null ? Double.parseDouble(data.get("longitude").toString()) : null);
-        address.setEncounter_number(data.get("encounter_number") != null ? Integer.parseInt(data.get("encounter_number").toString()) : null);
+        address.setLongitude(data.get("longitude") != null ? data.get("longitude").toString() : null);
+        address.setEncounter_number((String) data.getOrDefault("encounter_number", null));
         address.setIsworkday((String) data.getOrDefault("isworkday", null));
         address.setPeriod((String) data.getOrDefault("period", null));
         address.setService_description((String) data.getOrDefault("service_description", null));
@@ -96,20 +116,16 @@ public class DataPreprocessingService {
         address.setPrinciple_procedure((String) data.getOrDefault("principle_procedure", null));
         address.setProcedure_description((String) data.getOrDefault("procedure_description", null));
         address.setFsa((String) data.getOrDefault("fsa", null));
-        address.setLength_of_stay(data.get("length_of_stay") != null ? Integer.parseInt(data.get("length_of_stay").toString()) : null);
-        address.setAverage_gross_rent(data.get("average_gross_rent") != null ? Double.parseDouble(data.get("average_gross_rent").toString()) : null);
+        address.setLength_of_stay((String) data.getOrDefault("length_of_stay", null));
+        address.setAverage_gross_rent((String) data.getOrDefault("average_gross_rent", null));
 
         return address;
     }
 
 
     public void saveAddress(Map<String, Object> data) {
-        try {
-            Address address = mapToAddress(data);
-            mysqlRepository.save(address);
-        } catch (Exception e) {
-            System.err.println("Failed to save address: " + e.getMessage());
-        }
+        Address address = mapToAddress(data);
+        mysqlRepository.save(address);
     }
 
 

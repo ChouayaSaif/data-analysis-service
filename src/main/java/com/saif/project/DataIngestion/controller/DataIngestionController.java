@@ -1,10 +1,15 @@
 package com.saif.project.DataIngestion.controller;
 
+import com.saif.project.DataIngestion.ingestionType.CSVDataIngestion;
+import com.saif.project.DataIngestion.ingestionType.ExcelDataIngestion;
+import com.saif.project.DataIngestion.ingestionType.JSONDataIngestion;
 import com.saif.project.DataIngestion.service.DataIngestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.*;
@@ -15,49 +20,78 @@ public class DataIngestionController {
     private final DataIngestionService dataIngestionService;
 
     @Autowired
+    private CSVDataIngestion csvDataIngestion;
+
+    @Autowired
+    private ExcelDataIngestion excelDataIngestion;
+
+    @Autowired
+    private JSONDataIngestion jsonDataIngestion;
+
+    @Autowired
     public DataIngestionController(DataIngestionService dataIngestionService) {
         this.dataIngestionService = dataIngestionService;
     }
 
-    @GetMapping("/ingest")
-    public Map<String, Object> importData(@RequestParam String filePath) {
-        Map<String, Object> result = new HashMap<>();
+    // Predefined file path relative to the project directory
+    private static final String CSV_DEFAULT_FILE_PATH = "data.csv";
+
+    @GetMapping("/ingest-csv")
+    public ResponseEntity<?> importCSVData() {
         try {
-            Object data = dataIngestionService.importData(filePath);
-            result.put("data", data);
+            Object data = csvDataIngestion.importData(CSV_DEFAULT_FILE_PATH);
+            dataIngestionService.storeIngestedData(CSV_DEFAULT_FILE_PATH, data);
+            return ResponseEntity.ok(data);
         } catch (IOException e) {
-            e.printStackTrace();
-            result.put("error", "Failed to import data.");
+            return ResponseEntity.badRequest().body("Error reading the file: " + e.getMessage());
         }
-        return result;
     }
 
-    @GetMapping("/get-ingested-data")
-    public Map<String, Object> getIngestedData(@RequestParam String filePath) {
-        Map<String, Object> result = new HashMap<>();
-        Object ingestedData = dataIngestionService.getIngestedData(filePath);
+    private static final String EXCEL_DEFAULT_FILE_PATH = "data.xlsx";
 
-        if (ingestedData != null) {
-            result.put("data", ingestedData);  // Return the ingested data
-        } else {
-            result.put("error", "No data found for the given file path.");
+    @GetMapping("/ingest-excel")
+    public ResponseEntity<?> importExcelData() {
+        try {
+            // Use the predefined file path for Excel data
+            Object data = excelDataIngestion.importData(EXCEL_DEFAULT_FILE_PATH);
+            dataIngestionService.storeIngestedData(EXCEL_DEFAULT_FILE_PATH, data);
+            return ResponseEntity.ok(data);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("Error reading the file: " + e.getMessage());
         }
-
-        return result;
     }
 
-    // New method to get all ingested data
+    // Predefined file path relative to the project directory
+    private static final String JSON_DEFAULT_FILE_PATH = "data.json";
+
+    @GetMapping("/ingest-json")
+    public ResponseEntity<?> importJSONData() {
+        try {
+            // Use the predefined file path for JSON data
+            Object data = jsonDataIngestion.importData(JSON_DEFAULT_FILE_PATH);
+            dataIngestionService.storeIngestedData(JSON_DEFAULT_FILE_PATH, data);
+            return ResponseEntity.ok(data);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("Error reading the file: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/get-all-ingested-data")
-    public Map<String, Object> getAllIngestedData() {
-        Map<String, Object> result = new HashMap<>();
-        Map<String, Object> allData = dataIngestionService.getAllIngestedData();
+    public ResponseEntity<?> getAllIngestedData() {
+        try {
+            // Trigger ingestion of all data types for demonstration purposes
+            dataIngestionService.importAllAvailableData();
 
-        if (!allData.isEmpty()) {
-            result.put("data", allData);  // Return all the ingested data
-        } else {
-            result.put("error", "No data has been ingested yet.");
+            // Retrieve all ingested data
+            Map<String, Object> allData = dataIngestionService.getAllIngestedData();
+
+            if (!allData.isEmpty()) {
+                return ResponseEntity.ok(Collections.singletonMap("data", allData));
+            } else {
+                return ResponseEntity.badRequest().body(Collections.singletonMap("error", "No data has been ingested yet."));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Collections.singletonMap("error", "Failed to retrieve ingested data: " + e.getMessage()));
         }
-
-        return result;
     }
 }

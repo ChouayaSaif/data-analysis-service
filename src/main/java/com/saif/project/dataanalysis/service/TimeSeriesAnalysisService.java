@@ -64,9 +64,9 @@ public class TimeSeriesAnalysisService {
         try {
             switch (valueField) {
                 case "encounter_counter":
-                    return address.getEncounter_counter() != null ? address.getEncounter_counter().doubleValue() : Double.NaN;
+                    return address.getEncounter_counter() != null ? Double.parseDouble(address.getEncounter_counter()) : Double.NaN;
                 case "length_of_stay":
-                    return address.getLength_of_stay() != null ? address.getLength_of_stay().doubleValue() : Double.NaN;
+                    return address.getLength_of_stay() != null ? Double.parseDouble(address.getLength_of_stay()) : Double.NaN;
                 // Add more cases for other value fields as needed
                 default:
                     System.out.println("Unsupported value field: " + valueField);

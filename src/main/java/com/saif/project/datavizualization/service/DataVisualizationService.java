@@ -25,7 +25,13 @@ public class DataVisualizationService {
         return addresses.stream()
                 .collect(Collectors.groupingBy(
                         Address::getAreaname,
-                        Collectors.summingDouble(address -> address.getAverage_dwelling_value() != null ? address.getAverage_dwelling_value() : 0.0)
+                        Collectors.summingDouble(address -> {
+                            try {
+                                return Double.parseDouble(address.getAverage_dwelling_value());
+                            } catch (NumberFormatException | NullPointerException e) {
+                                return 0.0;
+                            }
+                        })
                 ));
     }
 
@@ -35,7 +41,13 @@ public class DataVisualizationService {
         return addresses.stream()
                 .collect(Collectors.groupingBy(
                         Address::getAreaname,
-                        Collectors.summingDouble(address -> address.getLength_of_stay() != null ? address.getLength_of_stay() : 0.0)
+                        Collectors.summingDouble(address -> {
+                            try {
+                                return Double.parseDouble(address.getLength_of_stay());
+                            } catch (NumberFormatException | NullPointerException e) {
+                                return 0.0;
+                            }
+                        })
                 ));
     }
 
@@ -45,7 +57,13 @@ public class DataVisualizationService {
         return addresses.stream()
                 .collect(Collectors.groupingBy(
                         Address::getAreaname,
-                        Collectors.summingDouble(address -> address.getAverage_gross_rent() != null ? address.getAverage_gross_rent() : 0.0)
+                        Collectors.summingDouble(address -> {
+                            try {
+                                return Double.parseDouble(address.getAverage_gross_rent());
+                            } catch (NumberFormatException | NullPointerException e) {
+                                return 0.0;
+                            }
+                        })
                 ));
     }
 
@@ -75,7 +93,13 @@ public class DataVisualizationService {
         return addresses.stream()
                 .collect(Collectors.groupingBy(
                         Address::getDepartment,
-                        Collectors.averagingDouble(address -> address.getLength_of_stay() != null ? address.getLength_of_stay() : 0.0)
+                        Collectors.averagingDouble(address -> {
+                            try {
+                                return Double.parseDouble(address.getLength_of_stay());
+                            } catch (NumberFormatException | NullPointerException e) {
+                                return 0.0;
+                            }
+                        })
                 ));
     }
 
@@ -85,7 +109,13 @@ public class DataVisualizationService {
         return addresses.stream()
                 .collect(Collectors.groupingBy(
                         Address::getInstitution,
-                        Collectors.summingDouble(address -> address.getAverage_gross_rent() != null ? address.getAverage_gross_rent() : 0.0)
+                        Collectors.summingDouble(address -> {
+                            try {
+                                return Double.parseDouble(address.getAverage_gross_rent());
+                            } catch (NumberFormatException | NullPointerException e) {
+                                return 0.0;
+                            }
+                        })
                 ));
     }
 
@@ -105,7 +135,13 @@ public class DataVisualizationService {
         return addresses.stream()
                 .collect(Collectors.groupingBy(
                         Address::getAreaname,
-                        Collectors.averagingDouble(address -> address.getAverage_gross_rent() != null ? address.getAverage_gross_rent() : 0.0)
+                        Collectors.averagingDouble(address -> {
+                            try {
+                                return Double.parseDouble(address.getAverage_gross_rent());
+                            } catch (NumberFormatException | NullPointerException e) {
+                                return 0.0;
+                            }
+                        })
                 ));
     }
 
@@ -125,7 +161,13 @@ public class DataVisualizationService {
         return addresses.stream()
                 .collect(Collectors.groupingBy(
                         Address::getPhysician_name,
-                        Collectors.summingDouble(address -> address.getPre_operative_days() != null ? address.getPre_operative_days() : 0.0)
+                        Collectors.summingDouble(address -> {
+                            try {
+                                return Double.parseDouble(address.getPre_operative_days());
+                            } catch (NumberFormatException | NullPointerException e) {
+                                return 0.0;
+                            }
+                        })
                 ));
     }
 
@@ -145,7 +187,13 @@ public class DataVisualizationService {
         return addresses.stream()
                 .collect(Collectors.groupingBy(
                         Address::getFsa,
-                        Collectors.averagingDouble(address -> address.getAverage_dwelling_value() != null ? address.getAverage_dwelling_value() : 0.0)
+                        Collectors.averagingDouble(address -> {
+                            try {
+                                return Double.parseDouble(address.getAverage_dwelling_value());
+                            } catch (NumberFormatException | NullPointerException e) {
+                                return 0.0;
+                            }
+                        })
                 ));
     }
 

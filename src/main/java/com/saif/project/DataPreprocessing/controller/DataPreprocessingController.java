@@ -2,11 +2,14 @@ package com.saif.project.DataPreprocessing.controller;
 
 import com.saif.project.DataPreprocessing.service.DataPreprocessingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +24,14 @@ public class DataPreprocessingController {
     }
 
     @GetMapping("/combine-ingested-data")
-    public List<Map<String, Object>> getCombinedIngestedData() {
-        return dataPreprocessingService.combineAllIngestedData();
+    public ResponseEntity<?> getCombinedIngestedData() {
+        List<Map<String, Object>> combinedData = dataPreprocessingService.combineAllIngestedData();
+
+        if (!combinedData.isEmpty()) {
+            return ResponseEntity.ok(Collections.singletonMap("data", combinedData));
+        } else {
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "No valid data ingested."));
+        }
     }
 
     // Handle missing values
